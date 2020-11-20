@@ -48,4 +48,11 @@ This readme contains the default configuration that is set in the modem mode sta
 * PDS : Enabled
 * HSM : Not implemented
 	
+
+#### Changelog ###
+
+##### V1.1.0
+* Kept the Flash in deep sleep in modem mode application which reduces the power consumption from 14-17 uA to ~2.3-2.7 uA during the Standby Sleep Mode
 	
+##### V1.0.0
+* ASCII Commands Support

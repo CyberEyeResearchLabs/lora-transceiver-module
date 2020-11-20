@@ -1,8 +1,8 @@
 # README #
 
-This folder contains basic transmission codes for IND865 and its LoRa parameters.
+This folder contains basic transmission codes for IND865 and also read, write, sleep functionality of flash memory
 
-##### Parameters used in the Application #####
+##### Parameters used in the LoRaWAN Application #####
 
 * Join Mode: OTAA
 * Device Class: Class A
@@ -24,3 +24,18 @@ This folder contains basic transmission codes for IND865 and its LoRa parameters
 * HSM: No
 
 Note: Default Configuration is different from one project to another.
+
+##### Flash Memory Functionalities #####
+
+* Read to a memory
+* Write from a memory 
+* Put the Flash memory in Deep Sleep
+
+#### Changelog ###
+
+##### V1.1.0
+* Kept the Flash in deep sleep in User interactive lorawan application which reduces the power consumption from ~14-18 uA to ~2.5 uA during the Standby Sleep Mode
+* Flash Memory Application which supports basic read, write functionality as well as can keep it in deep sleep mode.
+	
+##### V1.0.0
+* Basic Transmission Codes

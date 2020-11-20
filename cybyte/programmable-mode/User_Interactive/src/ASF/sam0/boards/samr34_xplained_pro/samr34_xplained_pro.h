@@ -88,16 +88,22 @@ void system_board_init(void);
 #define LED1_INACTIVE             !LED1_ACTIVE
 /** @} */
 
-/** \name SW0 definitions
+
+/**
+ * \name Serialflash definitions
+ *
+ * On board Serialflash definitions.
+ *
  *  @{ */
-// #define SW0_PIN                   PIN_PA28
-// #define SW0_ACTIVE                false
-// #define SW0_INACTIVE              !SW0_ACTIVE
-// #define SW0_EIC_PIN               PIN_PA28
-// #define SW0_EIC_MUX               MUX_PA28A_EIC_EXTINT8
-// #define SW0_EIC_PINMUX            PINMUX_PA28A_EIC_EXTINT8
-// #define SW0_EIC_LINE              8
+#define SERIALFLASH_SPI_MODULE			SERCOM5
+#define SERIALFLASH_SPI_MUX_SETTING		SPI_SIGNAL_MUX_SETTING_E
+#define SERIALFLASH_SPI_PINMUX_PAD0		PINMUX_PB02D_SERCOM5_PAD0
+#define SERIALFLASH_SPI_PINMUX_PAD1		PINMUX_UNUSED
+#define SERIALFLASH_SPI_PINMUX_PAD2		PINMUX_PB22D_SERCOM5_PAD2
+#define SERIALFLASH_SPI_PINMUX_PAD3		PINMUX_PB23D_SERCOM5_PAD3
+#define SERIALFLASH_SPI_CS				PIN_PA19
 /** @} */
+
 
 /** \name RF SWITCH definitions
  *  @{ */

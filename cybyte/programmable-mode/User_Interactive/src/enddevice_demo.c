@@ -196,6 +196,7 @@ static void displayRunDemoApp(void);
 static void runCertApp(void);
 #endif
 #ifdef CONF_PMM_ENABLE
+extern void at25dfx_deep_sleep(void);
 static void appWakeup(uint32_t sleptDuration);
 static void app_resources_uninit(void);
 #endif
@@ -942,6 +943,9 @@ static void appWakeup(uint32_t sleptDuration)
 #ifdef CONF_PMM_ENABLE
 static void app_resources_uninit(void)
 {
+	
+	at25dfx_deep_sleep();
+	
     /* Disable USART TX and RX Pins */
     struct port_config pin_conf;
     port_get_config_defaults(&pin_conf);
@@ -959,6 +963,7 @@ static void app_resources_uninit(void)
 	
 	/* FEM in Shutdown mode (PA13 --> CSD) */
 	port_pin_set_output_level(CSD_PIN, CSD_INACTIVE);
+	
 }
 #endif
 

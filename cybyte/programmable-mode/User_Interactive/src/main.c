@@ -63,6 +63,8 @@
 #include "enddevice_cert.h"
 #endif
 #include "sal.h"
+#include "config_at25dfx.h"
+
 /************************** Macro definition ***********************************/
 /* Button debounce time in ms */
 #define APP_DEBOUNCE_TIME       50
@@ -78,6 +80,11 @@ extern bool certAppEnabled;
 bool deviceResetsForWakeup = false;
 #endif
 /************************** Extern variables ***********************************/
+//! [driver_instances]
+struct spi_module at25dfx_spi;
+struct at25dfx_chip_module at25dfx_chip;
+//! [driver_instances]
+void at25dfx_deep_sleep(void);
 
 /************************** Function Prototypes ********************************/
 static void driver_init(void);
@@ -141,6 +148,59 @@ static void assertHandler(SystemAssertLevel_t level, uint16_t code)
 }
 #endif /* #if (_DEBUG_ == 1) */
 
+/************************* START: FLASH MEMORY ***********************/
+/**
+ * \brief Initializing the Flash Memory
+ */
+
+//! [init_function]
+static void at25dfx_init(void)
+{
+//! [config_instances]
+	struct at25dfx_chip_config at25dfx_chip_config;
+	struct spi_config at25dfx_spi_config;	
+//! [config_instances]
+
+//! [spi_setup]
+	at25dfx_spi_get_config_defaults(&at25dfx_spi_config);
+	at25dfx_spi_config.mode_specific.master.baudrate = AT25DFX_CLOCK_SPEED;
+	at25dfx_spi_config.mux_setting = AT25DFX_SPI_PINMUX_SETTING;
+	at25dfx_spi_config.pinmux_pad0 = AT25DFX_SPI_PINMUX_PAD0;
+	at25dfx_spi_config.pinmux_pad1 = AT25DFX_SPI_PINMUX_PAD1;
+	at25dfx_spi_config.pinmux_pad2 = AT25DFX_SPI_PINMUX_PAD2;
+	at25dfx_spi_config.pinmux_pad3 = AT25DFX_SPI_PINMUX_PAD3;
+
+	spi_init(&at25dfx_spi, AT25DFX_SPI, &at25dfx_spi_config);
+	spi_enable(&at25dfx_spi);
+		
+//! [spi_setup]
+
+//! [chip_setup]
+	at25dfx_chip_config.type = AT25DFX_MEM_TYPE;
+	at25dfx_chip_config.cs_pin = AT25DFX_CS;
+
+	at25dfx_chip_init(&at25dfx_chip, &at25dfx_spi, &at25dfx_chip_config);
+//! [chip_setup]
+
+}
+//! [init_function]
+
+/**
+ * \brief Flash Memory to deep sleep
+ */
+void at25dfx_deep_sleep(void)
+{
+	enum status_code status;
+	
+	status = at25dfx_chip_wake(&at25dfx_chip);
+// 	printf("Waking up Serial Flash              : %s\r\n", status?"NOT_OK":"OK");
+	
+	delay_ms(500);
+	
+	status = at25dfx_chip_sleep(&at25dfx_chip);
+// 	printf("Keeping Flash in Deep Sleep Mode    : %s\r\n", status?"NOT_OK":"OK");
+}
+
 /**
  * \mainpage
  * \section preface Preface
@@ -165,7 +225,7 @@ int main(void)
 #endif
     /* Initialize Hardware and Software Modules */
 	driver_init();
-   
+
     delay_ms(5);
     print_reset_causes();
 #if (_DEBUG_ == 1)
@@ -233,6 +293,10 @@ static void driver_init(void)
     /* PDS Module Init */
     PDS_Init();
 #endif
+
+	/* Initialize Flash Module */
+	at25dfx_init();
+
 	/* Initializes the Security modules */
 	sal_status = SAL_Init();
 	
@@ -248,6 +312,7 @@ static void driver_init(void)
 #ifdef CONF_PMM_ENABLE
 static void app_resources_uninit(void)
 {
+	at25dfx_deep_sleep();
     /* Disable USART TX and RX Pins */
     struct port_config pin_conf;
     port_get_config_defaults(&pin_conf);
@@ -261,6 +326,7 @@ static void app_resources_uninit(void)
 	
 	/* FEM in Shutdown mode (PA13 --> CSD) */
 	port_pin_set_output_level(CSD_PIN, CSD_INACTIVE);
+	
 }
 #endif
 /**

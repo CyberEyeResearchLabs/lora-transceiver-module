@@ -685,6 +685,7 @@
       <Value>../src/ASF/thirdparty/wireless/lorawan/services/edbg_eui</Value>
       <Value>../src/ASF/sam0/drivers/sercom/i2c</Value>
       <Value>../src/config</Value>
+      <Value>../src/at25df0x_lib</Value>
     </ListValues>
   </armgcc.compiler.directories.IncludePaths>
   <armgcc.compiler.optimization.level>Optimize (-O1)</armgcc.compiler.optimization.level>
@@ -982,6 +983,7 @@
     <Folder Include="src\ASF\thirdparty\wireless\services\nvm\" />
     <Folder Include="src\ASF\thirdparty\wireless\services\nvm\sam0\" />
     <Folder Include="src\config\" />
+    <Folder Include="src\at25df0x_lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\asf.h">
@@ -1804,6 +1806,21 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\ASF\thirdparty\wireless\services\nvm\sam0\sam_nvm.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\at25df0x_lib\at25dfx.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\at25df0x_lib\at25dfx.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\at25df0x_lib\at25dfx_hal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\at25df0x_lib\at25dfx_priv_hal.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\config\config_at25dfx.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\enddevice_cert.c">

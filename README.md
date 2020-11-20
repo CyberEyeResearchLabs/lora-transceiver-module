@@ -11,3 +11,17 @@ The module comes in 2 variants.
 1. CyBit - A +20dBm variant of the CyberEye's LoRa transceiver module which is an RN2483 drop in replacement.
  
 2. CyByte - A +27dBm miniature variant of CyberEye's LoRa transceiver module with dimensions ~13mm X 21mm. The variant is specifically designed to complement the solutions that require long-range connectivity and in-turn reliability where a +20dBm LoRa module might not be sufficient. An added feature for CyByte is the on-board flash memory for FUOTA implementation. The final specification document and release samples will be shared based on the requirement. 
+
+
+#### Changelog - CyByte ###
+
+##### V1.1.0
+* Kept the Flash in deep sleep in Modem Mode application and User interactive lorawan application which reduces the power consumption from ~14-17 uA to ~2.3-2.7 uA uA during the Standby Sleep Mode
+* Programmable Mode
+	* Flash Memory Application which supports basic read, write functionality as well as can keep it in deep sleep mode.
+
+##### V1.0.0
+* Programmable Mode 
+	* Basic Transmission Codes
+* Modem Mode Application
+	* Supports ASCII Command set
