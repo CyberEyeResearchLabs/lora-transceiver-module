@@ -23,6 +23,6 @@ This folder contains basic transmission codes for IND865 and its LoRa parameters
 		* PABOOST: 1 [PA Enabled]
 	* TX Power: 0
 * PDS : Enabled
-* HSM: Not Implemented
+* HSM: Implemented
 
 Note: Default Configuration is different from one project to another.

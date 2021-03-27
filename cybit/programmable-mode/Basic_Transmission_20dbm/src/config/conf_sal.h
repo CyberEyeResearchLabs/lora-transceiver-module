@@ -38,4 +38,16 @@
 #ifndef CONF_SAL_H_INCLUDED
 #define CONF_SAL_H_INCLUDED
 
+#define APP_KEY_SLOT             0
+#define APPS_KEY_SLOT            2
+#define NWKS_KEY_SLOT            3
+#define MCAST_APPS_KEY_SLOT		 11
+#define MCAST_NWKS_KEY_SLOT      12
+#define KEK_SLOT                 14
+#define APP_EUI_SLOT			 9
+#define DEV_EUI_SLOT			 10
+
+#define APP_KEY_SLOT_BLOCK		 1 //Index where AppKey is stored in a slot, KeyLocation in bytes = SlotBlock * 16;
+
+#define SERIAL_NUM_AS_DEV_EUI    0 // Value is 1 if ECC608 Serial number is used as DEV_EUI otherwise DEV_EUI will be read from DEV_EUI_SLOT
 #endif /* CONF_ATCAD_H_INCLUDED */

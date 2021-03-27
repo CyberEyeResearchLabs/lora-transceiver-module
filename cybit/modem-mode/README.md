@@ -29,7 +29,7 @@ This readme contains the default configuration that is set in the modem mode sta
 * Intelligent Low-Power mode with programmable wake-up(after a specified time) and consumes ~8.4 - ~8.9uA in standby mode.
 * All configuration and control have done over UART using simple ASCII commands with a baud rate of 115200
 * PDS to store the LoRaWAN Parameters and join configuration using mac save and restore even after power-on reset or sys reset.
-* Configurable Secure Join(HSM): Currently Disabled/Not implemented
+* Configurable Secure Join(HSM): Implemented
 
 
 ## Default Configuration of the stack ##
@@ -52,4 +52,15 @@ This readme contains the default configuration that is set in the modem mode sta
 		* PABOOST: 1 [PA Enabled]
 	* TX Power: 0
 * PDS : Enabled
-* HSM : Not implemented
+* HSM : Implemented
+
+## Changelog
+
+### V2.0.0
+* TFLXLoRa Secure Element is Implemented. 
+
+### V1.0.1
+* Flash functionality added
+
+### V1.0.0
+* ASCII Command set support added. Similar to RN2483.

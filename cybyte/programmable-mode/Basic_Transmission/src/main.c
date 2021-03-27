@@ -59,6 +59,11 @@
 #include "pds_interface.h"
 #endif
 #include "sal.h"
+#ifdef CRYPTO_DEV_ENABLED
+#include "cryptoauthlib.h"
+#include "conf_sal.h"
+#endif
+#include "config_at25dfx.h"
 /************************** Macro definition ***********************************/
 /* Button debounce time in ms */
 #define APP_DEBOUNCE_TIME       50
@@ -70,7 +75,11 @@ uint8_t TxTimerId = 0xFF;
 bool deviceResetsForWakeup = false;
 #endif
 /************************** Extern variables ***********************************/
-
+//! [driver_instances]
+struct spi_module at25dfx_spi;
+struct at25dfx_chip_module at25dfx_chip;
+//! [driver_instances]
+void at25dfx_deep_sleep(void);
 /************************** Function Prototypes ********************************/
 static void driver_init(void);
 
@@ -133,6 +142,109 @@ static void assertHandler(SystemAssertLevel_t level, uint16_t code)
 }
 #endif /* #if (_DEBUG_ == 1) */
 
+/************************* START: FLASH MEMORY ***********************/
+/**
+ * \brief Initializing the Flash Memory
+ */
+//! [init_function]
+static void at25dfx_init(void)
+{
+//! [config_instances]
+	struct at25dfx_chip_config at25dfx_chip_config;
+	struct spi_config at25dfx_spi_config;	
+//! [config_instances]
+
+//! [spi_setup]
+	at25dfx_spi_get_config_defaults(&at25dfx_spi_config);
+	at25dfx_spi_config.mode_specific.master.baudrate = AT25DFX_CLOCK_SPEED;
+	at25dfx_spi_config.mux_setting = AT25DFX_SPI_PINMUX_SETTING;
+	at25dfx_spi_config.pinmux_pad0 = AT25DFX_SPI_PINMUX_PAD0;
+	at25dfx_spi_config.pinmux_pad1 = AT25DFX_SPI_PINMUX_PAD1;
+	at25dfx_spi_config.pinmux_pad2 = AT25DFX_SPI_PINMUX_PAD2;
+	at25dfx_spi_config.pinmux_pad3 = AT25DFX_SPI_PINMUX_PAD3;
+
+	spi_init(&at25dfx_spi, AT25DFX_SPI, &at25dfx_spi_config);
+	spi_enable(&at25dfx_spi);
+		
+//! [spi_setup]
+
+//! [chip_setup]
+	at25dfx_chip_config.type = AT25DFX_MEM_TYPE;
+	at25dfx_chip_config.cs_pin = AT25DFX_CS;
+
+	at25dfx_chip_init(&at25dfx_chip, &at25dfx_spi, &at25dfx_chip_config);
+//! [chip_setup]
+
+}
+//! [init_function]
+
+/**
+ * \brief Flash Memory to deep sleep
+ */
+void at25dfx_deep_sleep(void)
+{
+	enum status_code status;
+	
+	status = at25dfx_chip_wake(&at25dfx_chip);
+// 	printf("Waking up Serial Flash              : %s\r\n", status?"NOT_OK":"OK");
+	
+	delay_ms(500);
+	
+	status = at25dfx_chip_sleep(&at25dfx_chip);
+// 	printf("Keeping Flash in Deep Sleep Mode    : %s\r\n", status?"NOT_OK":"OK");
+}
+
+#ifdef CRYPTO_DEV_ENABLED
+static void print_ecc_info(void)
+{
+	ATCA_STATUS  status;
+	uint8_t    sn[9];			// ECC608A serial number (9 Bytes)
+	uint8_t    info[2];
+	uint8_t    tkm_info[10];
+	int      slot = 10;
+	int      offset = 70;
+	uint8_t appEUI[8];
+	uint8_t devEUIascii[16];
+	uint8_t devEUIdecoded[8];	// hex.
+	size_t bin_size = sizeof(devEUIdecoded);
+
+	// read the serial number
+	status = atcab_read_serial_number(sn);
+	printf("\r\n--------------------------------\r\n");
+
+	// read the SE_INFO
+	status = atcab_read_bytes_zone(ATCA_ZONE_DATA, slot, offset, info, sizeof(info));
+	
+	// Read the CustomDevEUI
+	status = atcab_read_bytes_zone(ATCA_ZONE_DATA, DEV_EUI_SLOT, 0, devEUIascii, 16);
+	atcab_hex2bin((char*)devEUIascii, strlen((char*)devEUIascii), devEUIdecoded, &bin_size);
+
+	// Print DevEUI
+	printf("DEV EUI:  ");
+	#if (SERIAL_NUM_AS_DEV_EUI == 1)
+	print_array(sn, sizeof(sn)-1);
+	#else
+	print_array(devEUIdecoded, sizeof(devEUIdecoded));
+	#endif
+	
+	// Read and Print the AppEUI
+	status = atcab_read_bytes_zone(ATCA_ZONE_DATA, APP_EUI_SLOT, 0, appEUI, 8);
+	printf("APP EUI:  ");
+	print_array(appEUI, sizeof(appEUI));
+	
+	//Print Serial Number
+	printf("SERIAL NUMBER:  ");
+	print_array(sn, sizeof(sn));
+	
+	// assemble full TKM_INFO
+	memcpy(tkm_info, info, 2);
+	memcpy(&tkm_info[2], sn, 8);
+	// tkm_info[] now contains the assembled tkm_info data
+	printf("TKM INFO: ");
+	print_array(tkm_info, sizeof(tkm_info));
+	printf("--------------------------------\r\n");
+}
+#endif
 /**
  * \mainpage
  * \section preface Preface
@@ -160,6 +272,9 @@ int main(void)
    
     delay_ms(5);
     print_reset_causes();
+	/* Put Flash in Deep Sleep */
+	at25dfx_deep_sleep();
+	
 #if (_DEBUG_ == 1)
     SYSTEM_AssertSubscribe(assertHandler);
 #endif
@@ -168,6 +283,9 @@ int main(void)
 
     SwTimerCreate(&lTimerId);
 	SwTimerCreate(&TxTimerId);
+#ifdef CRYPTO_DEV_ENABLED
+	print_ecc_info();
+#endif
 
     mote_demo_init();
 
@@ -222,6 +340,8 @@ static void driver_init(void)
     /* PDS Module Init */
     PDS_Init();
 #endif
+	/* Initialize Flash Module */
+	at25dfx_init();
 	/* Initializes the Security modules */
 	sal_status = SAL_Init();
 	
@@ -237,6 +357,7 @@ static void driver_init(void)
 #ifdef CONF_PMM_ENABLE
 static void app_resources_uninit(void)
 {
+	at25dfx_deep_sleep();
     /* Disable USART TX and RX Pins */
     struct port_config pin_conf;
     port_get_config_defaults(&pin_conf);

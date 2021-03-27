@@ -340,7 +340,12 @@ SalStatus_t SAL_Read(salItems_t key_type, uint8_t* key)
 #if (SERIAL_NUM_AS_DEV_EUI == 1)
 			status = atcab_read_serial_number(key);
 #else
-			status = atcab_read_bytes_zone(ATCA_ZONE_DATA, keyId, 0, key, SAL_EUI_LEN);
+			//status = atcab_read_bytes_zone(ATCA_ZONE_DATA, keyId, 0, key, SAL_EUI_LEN);
+			
+			uint8_t devEUIascii[16] ;
+			size_t bin_size = SAL_EUI_LEN ;
+			status = atcab_read_bytes_zone(ATCA_ZONE_DATA, DEV_EUI_SLOT, 0, devEUIascii, 16) ;
+			atcab_hex2bin((char*)devEUIascii, strlen((char*)devEUIascii), key, &bin_size) ;
 #endif
 		}
 		break;

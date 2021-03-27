@@ -15,6 +15,16 @@ The module comes in 2 variants.
 
 #### Changelog - CyByte ###
 
+##### V2.0.0
+* TFLXLoRa Secure Element functionality is added
+	* CyBit: Modem Mode, Basic Transmission, User interactive LoRaWAN applications
+	* CyByte: Modem Mode, Basic Transmission, User interactive LoRaWAN applications
+* Kept the Flash in deep sleep in Basic Transmission Application which reduces the power consumption from ~14-17 uA to ~2.3-2.7 uA uA during the Standby Sleep Mode
+* CyByte EVK Sensor codes are added.
+	* LDR
+	* Battery Guage
+	* Basic Transmission when User Button pressed
+
 ##### V1.1.0
 * Kept the Flash in deep sleep in Modem Mode application and User interactive lorawan application which reduces the power consumption from ~14-17 uA to ~2.3-2.7 uA uA during the Standby Sleep Mode
 * Programmable Mode

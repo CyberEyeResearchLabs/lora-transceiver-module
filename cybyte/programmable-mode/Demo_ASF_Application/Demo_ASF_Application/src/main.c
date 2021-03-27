@@ -54,8 +54,8 @@
 #define CONFIRMED                         LORAWAN_CNF
 
 /* Enable one of the activation methods */
-#define DEMO_APP_ACTIVATION_TYPE               OVER_THE_AIR_ACTIVATION
-//#define DEMO_APP_ACTIVATION_TYPE               ACTIVATION_BY_PERSONALIZATION
+// #define DEMO_APP_ACTIVATION_TYPE               OVER_THE_AIR_ACTIVATION
+#define DEMO_APP_ACTIVATION_TYPE               ACTIVATION_BY_PERSONALIZATION
 
 /* Select the Type of Transmission - Confirmed(CNF) / Unconfirmed(UNCNF) */
 #define DEMO_APP_TRANSMISSION_TYPE              UNCONFIRMED

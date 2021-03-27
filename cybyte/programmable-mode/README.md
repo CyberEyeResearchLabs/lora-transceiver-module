@@ -21,7 +21,7 @@ This folder contains basic transmission codes for IND865 and also read, write, s
 	* TX Power: 0
 	* MAX EIRP: 14
 * PDS : Enabled
-* HSM: No
+* HSM: Implemented
 
 Note: Default Configuration is different from one project to another.
 
@@ -32,6 +32,11 @@ Note: Default Configuration is different from one project to another.
 * Put the Flash memory in Deep Sleep
 
 #### Changelog ###
+
+##### V2.0.0
+* TFLXLoRa Secure Element functionality is added
+	* CyByte: Modem Mode, Basic Transmission, User interactive LoRaWAN application
+* Kept the Flash in deep sleep in Basic Transmission application.
 
 ##### V1.1.0
 * Kept the Flash in deep sleep in User interactive lorawan application which reduces the power consumption from ~14-18 uA to ~2.5 uA during the Standby Sleep Mode

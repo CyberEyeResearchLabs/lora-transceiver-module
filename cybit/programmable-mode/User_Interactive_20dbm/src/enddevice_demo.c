@@ -151,6 +151,10 @@ uint8_t bandTable[] =
     0xFF
 };
 
+#ifdef CRYPTO_DEV_ENABLED
+uint8_t current_band_num;
+static uint8_t demoDevEui[8] = DEMO_DEVICE_EUI;
+#endif
 /*ABP Join Parameters */
 static uint32_t demoDevAddr = DEMO_DEVICE_ADDRESS;
 static uint8_t demoNwksKey[16] = DEMO_NETWORK_SESSION_KEY;
@@ -388,6 +392,10 @@ static void processJoinAndSend(void)
 	StackRetStatus_t status = LORAWAN_SUCCESS;
 	if(serialBuffer == '1')
 	{
+		#ifdef CRYPTO_DEV_ENABLED
+		PDS_DeleteAll();
+		mote_set_parameters(bandTable[current_band_num], current_band_num);
+		#endif
 		status = LORAWAN_Join(DEMO_APP_ACTIVATION_TYPE);
 		if (LORAWAN_SUCCESS == (StackRetStatus_t)status)
 		{
@@ -469,6 +477,9 @@ static void processJoinAndSend(void)
 static void processRunDemoApp(void)
 {
 	uint8_t num = serialBuffer - '0';
+#ifdef CRYPTO_DEV_ENABLED
+	current_band_num = num;
+#endif
 	if(num == sizeof(bandTable)-1)
 	{
 		NVIC_SystemReset();
@@ -840,6 +851,11 @@ void demo_appdata_callback(void *appHandle, appCbParams_t *appdata)
  ************************************************************************/
 void demo_joindata_callback(StackRetStatus_t status)
 {
+#ifdef CRYPTO_DEV_ENABLED
+	printf("\nDevEUI: ");
+	LORAWAN_GetAttr(DEV_EUI, NULL, &demoDevEui);
+	print_array((uint8_t *)&demoDevEui, sizeof(demoDevEui));
+#endif
     /* This is called every time the join process is finished */
     if(LORAWAN_SUCCESS == status)
     {

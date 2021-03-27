@@ -46,10 +46,13 @@ This readme contains the default configuration that is set in the modem mode sta
 	* TX Power: 0
 	* MAX EIRP: 14
 * PDS : Enabled
-* HSM : Not implemented
+* HSM : Implemented
 	
 
 #### Changelog ###
+
+##### V2.0.0
+* TFLXLoRa Secure Element functionality is added in modem mode application
 
 ##### V1.1.0
 * Kept the Flash in deep sleep in modem mode application which reduces the power consumption from 14-17 uA to ~2.3-2.7 uA during the Standby Sleep Mode
